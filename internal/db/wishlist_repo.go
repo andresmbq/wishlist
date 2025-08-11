@@ -17,7 +17,7 @@ func NewPostgresWishlistRepo(conn *pgx.Conn) *PostgresWishListRepo {
 
 func (r *PostgresWishListRepo) Save(ctx context.Context, item *models.WishlistItem) error {
 	_, err := r.Conn.Exec(ctx,
-		`INSERT INTO wishlist_items (id, user_id, product_id, added_at)
+		`INSERT INTO wishlist_items (id, user_id, product_id, created_at)
 		 VALUES ($1, $2, $3, $4)`,
 		item.ID, item.UserID, item.ProductID, item.AddedAt)
 	return err
@@ -25,7 +25,7 @@ func (r *PostgresWishListRepo) Save(ctx context.Context, item *models.WishlistIt
 
 func (r *PostgresWishListRepo) GetByUserID(ctx context.Context, userID string) ([]*models.WishlistItem, error) {
 	rows, err := r.Conn.Query(ctx,
-		`SELECT id, user_id, product_id, added_at FROM wishlist_items WHERE user_id = $1`, userID)
+		`SELECT id, user_id, product_id, created_at FROM wishlist_items WHERE user_id = $1`, userID)
 	if err != nil {
 		return nil, err
 	}

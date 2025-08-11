@@ -35,3 +35,11 @@ func (s *WishlistService) AddItem(ctx context.Context, userID, productID string)
 
 	return s.Publisher.PublishWishlistItemAdded(ctx, item)
 }
+
+func (s *WishlistService) GetByUserID(ctx context.Context, userID string) ([]*models.WishlistItem, error) {
+	return s.Repo.GetByUserID(ctx, userID)
+}
+
+func (s *WishlistService) RemoveItem(ctx context.Context, itemID string) error {
+	return s.Repo.Remove(ctx, itemID)
+}

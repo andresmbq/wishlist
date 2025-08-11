@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"wishlist/internal/api"
 	"wishlist/internal/app"
@@ -10,6 +11,7 @@ import (
 	"wishlist/internal/events"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 
 	"github.com/jackc/pgx/v4"
 )
@@ -32,6 +34,23 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/wishlist/items", handler.AddItem).Methods("POST")
-	r.HandleFunc("/wishlist/{user_id}", handler.AddItem).Methods("GET")
-	r.HandleFunc("/wishlist/items/{item_id}", handler.AddItem).Methods("DELETE")
+	r.HandleFunc("/wishlist/{user_id}", handler.GetItems).Methods("GET")
+	r.HandleFunc("/wishlist/items/{item_id}", handler.RemoveItem).Methods("DELETE")
+
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: r,
+	}
+
+	log.Println("wishlist service running on :8080")
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("server failed to start: %v", err)
+	}
+}
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
